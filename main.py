@@ -51,7 +51,7 @@ def generate_k(points):
     Generate K random points between the ranges.
     :return list of the random points.
     """
-    colors = ["blue", "red", "green", "violet", "yellow"]
+    colors = ["blue", "red", "green", "violet", "yellow", "orange", "teal", "salmon", "turquoise"]
     centers = []
 
     # for x dimension
@@ -70,7 +70,7 @@ def generate_k(points):
         centroid = Point(round(random.uniform(min_num.x, max_num.x)),
                          round(random.uniform(min_num2.y, max_num2.y)),
                          round(random.uniform(min_num3.z, max_num3.z)))
-        rand_col = random.randrange(0, 5)
+        rand_col = random.randrange(0, 9)
         centroid.set_color(colors[rand_col])
         centroid.claster = k
         centers.append(centroid)
@@ -200,4 +200,30 @@ if __name__ == "__main__":
         ax.scatter(i.x, i.y, i.z, c=i.color, marker='o', s=120)
     connect_points(new_centers_list, clasterized_points)
     plt.show()
+
+    import dash
+    import dash_core_components as dcc
+    import dash_html_components as html
+    import plotly.graph_objs as go
+    import pandas as pd
+
+    df = pd.DataFrame({'X': [i.x for i in clasterized_points],
+                       'Y': [i.y for i in clasterized_points],
+                       'Z': [i.z for i in clasterized_points],
+                       'color': [i.color for i in clasterized_points]})
+
+    layout = go.Layout(margin=dict(l=0, r=0), height=800, width=800)
+
+    fig = go.Figure(data=[go.Scatter3d(x=df.X, y=df.Y, z=df.Z,
+                                       mode='markers', marker_color=df.color)], layout=layout)
+    app = dash.Dash()
+    app.layout = html.Div([
+        dcc.Graph(
+            id='graph',
+            figure=fig)
+    ])
+
+    app.run_server(debug=True, use_reloader=False)
+
+
 
