@@ -142,7 +142,7 @@ def update_centers(points, centroids):
                 new_means[c].append(point)
     for centroida, points_list in new_means.items():
         centroida = calculate_avg(points_list, centroida)
-    
+
     return list(new_means.keys())
 
 
@@ -163,19 +163,37 @@ if __name__ == "__main__":
     old_assignments = None
     points_list = init_all_points()
     centroids_list = generate_k(points_list)
-    q = 0
 
+    # show start
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
+    fig.suptitle("Start K-means")
+    for i in points_list:
+        ax.scatter(i.x, i.y, i.z, c=i.color)
+    for i in centroids_list:
+        ax.scatter(i.x, i.y, i.z, c=i.color, marker='o', s=120)
+    plt.show()
 
     assignments_list, clasterized_points = find_distance(points_list, centroids_list)
     new_centers_list = []
     while assignments_list != old_assignments:
-        q += 1
         new_centers_list = update_centers(clasterized_points, centroids_list)
         old_assignments = assignments_list
         assignments_list = find_distance(clasterized_points, new_centers_list)
+        # for showing iterating plots
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        for i in clasterized_points:
+            ax.scatter(i.x, i.y, i.z, c=i.color)
+        for i in new_centers_list:
+            ax.scatter(i.x, i.y, i.z, c=i.color, marker='o', s=120)
+        connect_points(new_centers_list, clasterized_points)
+        plt.show()
 
+    # RES
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    fig.suptitle("RESULT K-means")
     for i in clasterized_points:
         ax.scatter(i.x, i.y, i.z, c=i.color)
     for i in new_centers_list:
@@ -183,4 +201,3 @@ if __name__ == "__main__":
     connect_points(new_centers_list, clasterized_points)
     plt.show()
 
-    print("iter", q)
